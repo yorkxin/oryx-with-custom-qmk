@@ -9,6 +9,7 @@ enum custom_keycodes {
   RGB_SLD = ZSA_SAFE_RANGE,
   MAC_LOCK,
   DRAG_SCROLL,
+  CHORDAL_CMD_TAB, // cordal cmd tab, like TailorKey
 };
 
 
@@ -70,6 +71,7 @@ const uint16_t PROGMEM combo8[] = { KC_7, KC_U, COMBO_END};
 const uint16_t PROGMEM combo9[] = { KC_8, KC_I, COMBO_END};
 const uint16_t PROGMEM combo10[] = { KC_9, KC_O, COMBO_END};
 const uint16_t PROGMEM combo11[] = { KC_0, KC_P, COMBO_END};
+const uint16_t PROGMEM combo_chordal_cmd_tab[] = {LT(1, KC_ENTER), KC_B, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, KC_F11),
@@ -84,6 +86,7 @@ combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo9, KC_F8),
     COMBO(combo10, KC_F9),
     COMBO(combo11, KC_F10),
+    COMBO(combo_chordal_cmd_tab, CHORDAL_CMD_TAB),
 };
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
@@ -287,6 +290,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         rgblight_mode(1);
       }
       return false;
+    case CHORDAL_CMD_TAB:
+      if (record->event.pressed) {
+        layer_on(1);
+        register_code(KC_LCMD);
+        tap_code(KC_TAB);
+      } else {
+        unregister_code(KC_LCMD);
+        layer_off(1);
+      }
   }
   return true;
 }
