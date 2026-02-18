@@ -1,8 +1,8 @@
 #define FLOW_TAP_TERM 100
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "r9RqJ/orvD7Q"
+#define SERIAL_NUMBER "r9RqJ/AzE6nR"
 #define LAYER_STATE_8BIT
-#define COMBO_COUNT 12
+#define COMBO_COUNT 14
 #define HCS(report) host_consumer_send(record->event.pressed ? report : 0); return false
 
 #define TAPPING_TERM_PER_KEY
@@ -10,7 +10,7 @@
 #define POINTING_DEVICE_HIRES_SCROLL_EXPONENT 0
 #define MOUSE_EXTENDED_REPORT
 #define WHEEL_EXTENDED_REPORT
-#define NAVIGATOR_TRACKBALL_CPI 30
+#define NAVIGATOR_TRACKBALL_CPI 40
 #define NAVIGATOR_SCROLL_DIVIDER 50
 
 #define AUTOMOUSE_LAYER 4
