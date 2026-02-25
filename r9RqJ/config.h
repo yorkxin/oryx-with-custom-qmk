@@ -1,6 +1,6 @@
 #define FLOW_TAP_TERM 100
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "r9RqJ/6aJbxE"
+#define SERIAL_NUMBER "r9RqJ/aNgDEG"
 #define LAYER_STATE_8BIT
 #define COMBO_COUNT 14
 #define HCS(report) host_consumer_send(record->event.pressed ? report : 0); return false
@@ -16,7 +16,6 @@
 #define AUTOMOUSE_LAYER 4
 #define AUTOMOUSE_TIMEOUT 300
 #define AUTOMOUSE_THRESHOLD 10
-#define AUTOMOUSE_ONESHOT
 #define AUTOMOUSE_SCROLL_THRESHOLD AUTOMOUSE_THRESHOLD / NAVIGATOR_SCROLL_DIVIDER
 #define NAVIGATOR_SCROLL_INVERT_X
 #define NAVIGATOR_SCROLL_INVERT_Y
