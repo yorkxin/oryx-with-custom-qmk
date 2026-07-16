@@ -16,30 +16,30 @@ enum custom_keycodes {
 
 
 
-#define DUAL_FUNC_0 LT(14, KC_O)
-#define DUAL_FUNC_1 LT(2, KC_Q)
-#define DUAL_FUNC_2 LT(12, KC_Q)
+#define DUAL_FUNC_0 LT(9, KC_D)
+#define DUAL_FUNC_1 LT(11, KC_F9)
+#define DUAL_FUNC_2 LT(6, KC_F6)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_BSLS,
     KC_TAB,         KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_MINUS,
-    LT(3, KC_ESCAPE),MT(MOD_LCTL, KC_A),MT(MOD_LALT, KC_S),MT(MOD_LGUI, KC_D),MT(MOD_LSFT, KC_F),KC_G,                                           KC_H,           MT(MOD_RSFT, KC_J),MT(MOD_RGUI, KC_K),MT(MOD_RALT, KC_L),MT(MOD_RCTL, KC_SCLN),KC_QUOTE,
+    MT(MOD_LCTL, KC_ESCAPE),MT(MOD_LCTL, KC_A),MT(MOD_LALT, KC_S),MT(MOD_LGUI, KC_D),MT(MOD_LSFT, KC_F),KC_G,                                           KC_H,           MT(MOD_RSFT, KC_J),MT(MOD_RGUI, KC_K),MT(MOD_RALT, KC_L),MT(MOD_RCTL, KC_SCLN),KC_QUOTE,       
     KC_CAPS,        KC_Z,           KC_X,           KC_C,           LT(4, KC_V),    KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_SLASH,       LT(3, KC_EQUAL),
                                                     LT(1, KC_ENTER),KC_LEFT_SHIFT,                                  DUAL_FUNC_0,    LT(2, KC_SPACE)
   ),
   [1] = LAYOUT_voyager(
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
-    KC_NO,          LSFT(KC_TAB),   LGUI(LSFT(KC_Z)),LGUI(KC_Z),     KC_TAB,         LGUI(KC_X),                                     LGUI(KC_X),     KC_LBRC,        LSFT(KC_TAB),   KC_TAB,         KC_RBRC,        KC_NO,          
-    KC_BSPC,        KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    KC_LEFT_SHIFT,  LGUI(KC_C),                                     LGUI(KC_C),     DUAL_FUNC_1,    KC_DOWN,        KC_UP,          DUAL_FUNC_2,    LGUI(LSFT(KC_Z)),
-    LGUI(KC_A),     KC_NO,          LGUI(LSFT(KC_G)),LGUI(KC_G),     LGUI(KC_F),     LGUI(KC_V),                                     LGUI(KC_V),     LGUI(KC_LEFT),  KC_PGDN,        KC_PAGE_UP,     LGUI(KC_RIGHT), LGUI(KC_Z),     
-                                                    KC_TRANSPARENT, LCTL(KC_TAB),                                   ST_MACRO_0,     ST_MACRO_1
+    KC_DELETE,      LSFT(KC_TAB),   LGUI(LSFT(KC_Z)),LGUI(KC_Z),     KC_TAB,         LGUI(KC_X),                                     KC_DELETE,      KC_LBRC,        LSFT(KC_TAB),   KC_TAB,         KC_RBRC,        KC_NO,          
+    KC_BSPC,        KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    KC_LEFT_SHIFT,  LGUI(KC_C),                                     KC_PSCR,        DUAL_FUNC_1,    KC_DOWN,        KC_UP,          DUAL_FUNC_2,    LGUI(LSFT(KC_Z)),
+    LGUI(KC_A),     KC_NO,          LGUI(LSFT(KC_G)),LGUI(KC_G),     LGUI(KC_F),     LGUI(KC_V),                                     KC_INSERT,      LGUI(KC_LEFT),  KC_PGDN,        KC_PAGE_UP,     LGUI(KC_RIGHT), LGUI(KC_Z),     
+                                                    KC_TRANSPARENT, KC_TRANSPARENT,                                 ST_MACRO_0,     ST_MACRO_1
   ),
   [2] = LAYOUT_voyager(
     KC_NO,          KC_NO,          KC_LPRN,        KC_RPRN,        KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,
-    KC_EXLM,        KC_LBRC,        KC_LCBR,        KC_RCBR,        KC_RBRC,        KC_QUES,                                        KC_GRAVE,       KC_DELETE,      LSFT(KC_TAB),   KC_INSERT,      KC_NO,          KC_NO,
-    KC_HASH,        KC_CIRC,        KC_EQUAL,       KC_UNDS,        KC_DLR,         KC_ASTR,                                        KC_DQUO,        KC_BSPC,        KC_TAB,         KC_SPACE,       KC_ENTER,       KC_ESCAPE,
-    KC_TILD,        KC_LABK,        KC_PIPE,        KC_MINUS,       KC_RABK,        KC_SLASH,                                       KC_QUOTE,       KC_NO,          KC_AMPR,        KC_AT,          KC_NO,          KC_NO,
+    KC_EXLM,        KC_LBRC,        KC_LCBR,        KC_RCBR,        KC_RBRC,        KC_QUES,                                        KC_GRAVE,       KC_DELETE,      LSFT(KC_TAB),   KC_INSERT,      KC_ESCAPE,      KC_NO,          
+    KC_HASH,        KC_CIRC,        KC_EQUAL,       KC_UNDS,        KC_DLR,         KC_ASTR,                                        KC_DQUO,        KC_BSPC,        KC_TAB,         KC_SPACE,       KC_ENTER,       KC_NO,          
+    KC_NO,          KC_LABK,        KC_PIPE,        KC_MINUS,       KC_RABK,        KC_SLASH,                                       KC_QUOTE,       KC_TILD,        KC_AMPR,        KC_AT,          KC_SLASH,       KC_NO,          
                                                     KC_PERC,        KC_COLN,                                        KC_NO,          KC_TRANSPARENT
   ),
   [3] = LAYOUT_voyager(
@@ -136,7 +136,7 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [2] = { {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255}, {0,0,255} },
 
-    [3] = { {0,255,255}, {24,243,235}, {24,243,235}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,255,255}, {0,255,255}, {0,255,255}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,218,204}, {0,255,255}, {0,218,204} },
+    [3] = { {0,255,255}, {24,243,235}, {24,243,235}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,255,255}, {0,255,255}, {0,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,255,255}, {0,0,0} },
 
     [4] = { {0,218,204}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {0,218,204}, {40,255,255}, {40,255,255}, {0,218,204}, {40,255,255}, {40,255,255}, {40,255,255}, {24,243,235}, {196,255,255}, {0,218,204}, {0,218,204}, {86,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {0,218,204}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {40,255,255}, {0,218,204}, {40,255,255} },
 
@@ -192,10 +192,6 @@ bool rgb_matrix_indicators_user(void) {
 
   return true;
 }
-
-extern bool set_scrolling;
-extern bool navigator_turbo;
-extern bool navigator_aim;
 
 
 
@@ -274,13 +270,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
           unregister_code16(LALT(KC_RIGHT));
         }
-      }
-      return false;
-    case DRAG_SCROLL:
-      if (record->event.pressed) {
-        set_scrolling = true;
-      } else {
-        set_scrolling = false;
       }
       return false;
     case RGB_SLD:
