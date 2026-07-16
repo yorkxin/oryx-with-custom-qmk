@@ -10,7 +10,6 @@ enum custom_keycodes {
   ST_MACRO_0,
   ST_MACRO_1,
   MAC_LOCK,
-  DRAG_SCROLL,
   CHORDAL_CMD_TAB, // cordal cmd tab, like TailorKey
 };
 
