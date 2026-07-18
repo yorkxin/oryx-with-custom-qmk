@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  GEOMETRY: voyager
+  LAYOUT_ID: r9RqJ
+  METADATA:
+    sh: |
+      curl --location 'https://oryx.zsa.io/graphql'  \
+        --header 'Content-Type: application/json'  \
+        --data '{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) {  revision { hashId, qmkVersion, title }}}","variables":{"hashId":"{{.LAYOUT_ID}}","geometry":"{{.GEOMETRY}}","revisionId":"latest"}}' | jq -c '.data.layout.revision | [.hashId, .qmkVersion, .title]' 
+
+tasks:
+  default: 
+    deps: 
+      - build
+
+  pull:
+    desc: pull latest version of voyager source file
+    vars:
+      HASH_ID:
+        sh: echo '{{.METADATA}}' | jq -r '.[0]' 
+    cmds:
+      - echo 'hash_id={{.HASH_ID}}'
+      - curl -L "https://oryx.zsa.io/source/{{.HASH_ID}}" -o source.zip
+      - unzip -oj source.zip '*_source/*' -d '{{.LAYOUT_ID}}'
+      - defer: rm source.zip
+      # or use worktree to sync back to master
+      # TODO: git commit changes on oryx && git merge into master
+
+  qmk_source:
+    vars:
+      QMK_VERSION:
+        sh: echo '{{.METADATA}}' | jq -r '.[1]' | xargs printf "%.0f"
+    cmds:
+      - echo "{{.METADATA}}"
+      - echo 'qmk_version={{.QMK_VERSION}}'
+      - git submodule update --init --remote --depth=1 --no-single-branch
+      - cd qmk_firmware && git checkout -B firmware{{.QMK_VERSION}} origin/firmware{{.QMK_VERSION}} &&  git submodule update --init --recursive
+      # TODO git add submod && git commit
+      
+  docker_build:
+    deps:
+      - pull
+      - qmk_source
+    cmds:
+      - docker build -t qmk .
+
+  build:
+    deps:
+      - docker_build
+    vars:
+      DIR: "qmk_firmware/keyboards/zsa/{{.GEOMETRY}}/keymaps"
+      normalized_layout_geometry: 
+        sh: echo "{{.GEOMETRY}}" | sed 's/\//_/g'
+      QMK_VERSION:
+        sh: echo '{{.METADATA}}' | jq -r '.[1]' | xargs printf "%.0f"
+    cmds:
+      # Copy layout files to the qmk folder
+      - rm -rf {{.DIR}}/{{.LAYOUT_ID}}
+      - mkdir -p {{.DIR}} && cp -r {{.LAYOUT_ID}} {{.DIR}}
+
+      # Build the layout
+      - docker run -v ./qmk_firmware:/root --rm qmk /bin/sh -c "
+          qmk setup zsa/qmk_firmware -b firmware{{.QMK_VERSION}} -y  &&
+          make zsa/{{.GEOMETRY}}:{{.LAYOUT_ID}}"
+
+      # Find and export built layout
+      - find ./qmk_firmware -maxdepth 1 -type f -name "*{{.normalized_layout_geometry}}*.bin"
