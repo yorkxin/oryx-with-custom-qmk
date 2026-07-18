@@ -16,18 +16,35 @@ tasks:
     deps: 
       - build
 
-  pull:
+  sync:
+    deps:
+      - pull-oryx
+    cmds:
+      # TODO require running on main branch
+      - git fetch origin main
+      - git merge --no-edit -Xignore-all-space oryx
+
+  pull-oryx:
     desc: pull latest version of voyager source file
     vars:
       HASH_ID:
         sh: echo '{{.METADATA}}' | jq -r '.[0]' 
+      CHANGE_DESC:
+        sh: echo '{{.METADATA}}' | jq -r '.[2]' 
+      # TODO stop and ask for worktree creation if missing
+      ORYX_WORKTREE_DIR:
+        sh: |
+           git worktree list --porcelain | \
+             grep -a2 heads/oryx | grep -E "^worktree " | awk '{ print $2}'
+    dir: '{{.ORYX_WORKTREE_DIR}}'
     cmds:
       - echo 'hash_id={{.HASH_ID}}'
       - curl -L "https://oryx.zsa.io/source/{{.HASH_ID}}" -o source.zip
       - unzip -oj source.zip '*_source/*' -d '{{.LAYOUT_ID}}'
       - defer: rm source.zip
-      # or use worktree to sync back to master
-      # TODO: git commit changes on oryx && git merge into master
+      - git add .
+      - |
+          printf "✨(oryx): %s\n" "{{.CHANGE_DESC}}" | git commit -F - || echo "No layout change"
 
   qmk_source:
     vars:
@@ -42,7 +59,6 @@ tasks:
       
   docker_build:
     deps:
-      - pull
       - qmk_source
     cmds:
       - docker build -t qmk .
