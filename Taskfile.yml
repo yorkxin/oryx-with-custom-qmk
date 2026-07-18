@@ -5,24 +5,28 @@ version: '3'
 vars:
   GEOMETRY: voyager
   LAYOUT_ID: r9RqJ
-  METADATA:
-    sh: |
-      curl --location 'https://oryx.zsa.io/graphql'  \
-        --header 'Content-Type: application/json'  \
-        --data '{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) {  revision { hashId, qmkVersion, title }}}","variables":{"hashId":"{{.LAYOUT_ID}}","geometry":"{{.GEOMETRY}}","revisionId":"latest"}}' | jq -c '.data.layout.revision | [.hashId, .qmkVersion, .title]' 
 
 tasks:
-  default: 
-    deps: 
-      - build
+  default:
+    cmds:
+    - task: sync
+    - task: build
 
   sync:
-    deps:
-      - pull-oryx
+    vars:
+      METADATA:
+        sh: |
+          curl --location 'https://oryx.zsa.io/graphql'  \
+            --header 'Content-Type: application/json'  \
+            --data '{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) {  revision { hashId, qmkVersion, title }}}","variables":{"hashId":"{{.LAYOUT_ID}}","geometry":"{{.GEOMETRY}}","revisionId":"latest"}}' | jq -c '.data.layout.revision | [.hashId, .qmkVersion, .title]' 
     cmds:
       # TODO require running on main branch
       - git fetch origin main
+      - task: pull-oryx
+        vars:
+          METADATA: '{{.METADATA}}'
       - git merge --no-edit -Xignore-all-space oryx
+      - task: qmk-update
 
   pull-oryx:
     desc: pull latest version of voyager source file
@@ -31,6 +35,8 @@ tasks:
         sh: echo '{{.METADATA}}' | jq -r '.[0]' 
       CHANGE_DESC:
         sh: echo '{{.METADATA}}' | jq -r '.[2]' 
+      QMK_VERSION:
+        sh: echo '{{.METADATA}}' | jq -r '.[1]' | xargs printf "%.0f"
       # TODO stop and ask for worktree creation if missing
       ORYX_WORKTREE_DIR:
         sh: |
@@ -38,40 +44,50 @@ tasks:
              grep -a2 heads/oryx | grep -E "^worktree " | awk '{ print $2}'
     dir: '{{.ORYX_WORKTREE_DIR}}'
     cmds:
-      - echo 'hash_id={{.HASH_ID}}'
+      - |
+          jq -crn \
+            --arg hash_id '{{.HASH_ID}}' \
+            --arg qmk_version '{{.QMK_VERSION}}' \
+            '{hash_id: $hash_id, qmk_version: $qmk_version}' \
+            > metadata.json
+      - cat metadata.json
       - curl -L "https://oryx.zsa.io/source/{{.HASH_ID}}" -o source.zip
       - unzip -oj source.zip '*_source/*' -d '{{.LAYOUT_ID}}'
       - defer: rm source.zip
-      - git add '{{.LAYOUT_ID}}'
+      - git add '{{.LAYOUT_ID}}' metadata.json
       - |
           printf "✨(oryx): %s\n" "{{.CHANGE_DESC}}" | git commit -F - || echo "No layout change"
 
-  qmk_source:
+  qmk-update:
     vars:
       QMK_VERSION:
-        sh: echo '{{.METADATA}}' | jq -r '.[1]' | xargs printf "%.0f"
+        sh: cat metadata.json | jq -r ".qmk_version"
     cmds:
-      - echo "{{.METADATA}}"
       - echo 'qmk_version={{.QMK_VERSION}}'
       - git submodule update --init --remote --depth=1 --no-single-branch
-      - cd qmk_firmware && git checkout -B firmware{{.QMK_VERSION}} origin/firmware{{.QMK_VERSION}} &&  git submodule update --init --recursive
-      # TODO git add submod && git commit
+      - cd qmk_firmware && git checkout -B firmware{{.QMK_VERSION}} origin/firmware{{.QMK_VERSION}} && git submodule update --init --recursive
+      - git add qmk_firmware
+      - |
+           git commit -m "✨(qmk): Update firmware" || echo "No QMK change"
       
   docker_build:
-    deps:
-      - qmk_source
     cmds:
       - docker build -t qmk .
 
+  qmk-checkout:
+    cmds:
+      - git submodule update --init --recursive
+    
   build:
     deps:
       - docker_build
+      - qmk-checkout
     vars:
       DIR: "qmk_firmware/keyboards/zsa/{{.GEOMETRY}}/keymaps"
       normalized_layout_geometry: 
         sh: echo "{{.GEOMETRY}}" | sed 's/\//_/g'
       QMK_VERSION:
-        sh: echo '{{.METADATA}}' | jq -r '.[1]' | xargs printf "%.0f"
+        sh: cat metadata.json | jq -r ".qmk_version"
     cmds:
       # Copy layout files to the qmk folder
       - rm -rf {{.DIR}}/{{.LAYOUT_ID}}
