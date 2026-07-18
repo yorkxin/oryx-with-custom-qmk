@@ -42,7 +42,7 @@ tasks:
       - curl -L "https://oryx.zsa.io/source/{{.HASH_ID}}" -o source.zip
       - unzip -oj source.zip '*_source/*' -d '{{.LAYOUT_ID}}'
       - defer: rm source.zip
-      - git add .
+      - git add '{{.LAYOUT_ID}}'
       - |
           printf "✨(oryx): %s\n" "{{.CHANGE_DESC}}" | git commit -F - || echo "No layout change"
 
